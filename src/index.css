@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-size: 62.5%; /* 1rem = 10px */
+  }
+  body {
+    @apply text-text-primary bg-white;
+    font-size: 1.6rem;
+    line-height: 1.6;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 4.2rem);
+  }
+}
+
+/* Custom Utilities */
+.word {
+  display: inline-block;
+  opacity: 0.01;
+  transform: translateY(18px);
+  transition: opacity .6s ease-out, transform .6s ease-out;
+}
+
+.word.fade {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scrollbar hiding for carousel */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

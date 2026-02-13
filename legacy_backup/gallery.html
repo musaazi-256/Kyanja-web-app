@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gallery | Kyanja Junior School</title>
+    <meta
+      content="Explore the vibrant life at Kyanja Junior School through our photo gallery."
+      name="description"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      :root {
+        --primary: #071a63;
+        --accent: #fbbf24;
+      }
+
+      .masonry-item {
+        break-inside: avoid;
+        margin-bottom: 1.5rem;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-in {
+        animation: fadeIn 0.6s ease-out forwards;
+      }
+
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Utility for filtering */
+      .hidden-item {
+        display: none !important;
+      }
+    </style>
+  </head>
+
+  <body
+    class="min-h-screen flex flex-col font-[Inter] bg-gray-50 text-gray-900"
+  >
+    <header class="fixed top-0 left-0 w-full z-[1000]">
+      <nav class="bg-[var(--primary)] text-white shadow-md">
+        <div
+          class="max-w-[1400px] mx-auto px-4 lg:px-10 py-4 flex items-center justify-between"
+        >
+          <a href="index.html" class="flex items-center gap-2">
+            <span
+              class="font-semibold text-[1.5rem] md:text-[2rem] tracking-wide"
+              >Kyanja Junior School</span
+            >
+          </a>
+
+          <ul
+            class="hidden md:flex items-center space-x-8 text-[1.1rem] font-medium"
+          >
+            <li>
+              <a
+                href="index.html"
+                class="hover:bg-[var(--accent)] rounded-lg px-2 py-1 transition"
+                >Home</a
+              >
+            </li>
+            <li>
+              <a
+                href="about.html"
+                class="hover:bg-[var(--accent)] rounded-lg px-2 py-1 transition"
+                >About</a
+              >
+            </li>
+            <li>
+              <a
+                href="gallery.html"
+                class="bg-[var(--accent)] text-[var(--primary)] rounded-lg px-2 py-1 transition"
+                >Gallery</a
+              >
+            </li>
+            <li>
+              <a
+                href="soon_coming.html"
+                class="hover:bg-[var(--accent)] rounded-lg px-2 py-1 transition"
+                >Admissions</a
+              >
+            </li>
+          </ul>
+
+          <button id="mobile-menu-btn" class="md:hidden text-3xl">☰</button>
+        </div>
+      </nav>
+
+      <div
+        id="mobile-menu"
+        class="fixed inset-0 bg-[var(--primary)] text-white pt-24 hidden z-[2000]"
+      >
+        <button id="close-menu" class="absolute top-6 right-6 text-4xl">
+          ×
+        </button>
+        <div class="flex flex-col items-center space-y-8 text-2xl font-bold">
+          <a href="index.html">Home</a>
+          <a href="about.html">About</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="soon_coming.html">Admissions</a>
+        </div>
+      </div>
+    </header>
+
+    <section
+      class="relative pt-32 pb-16 bg-[var(--primary)] text-white text-center"
+    >
+      <div class="max-w-4xl mx-auto px-6">
+        <h1 class="text-4xl md:text-6xl font-extrabold mb-4">
+          Our School Gallery
+        </h1>
+        <p class="text-xl text-blue-100">
+          Capturing moments of learning, joy, and growth.
+        </p>
+      </div>
+    </section>
+
+    <main class="flex-grow py-12 px-4 md:px-8 max-w-[1600px] mx-auto w-full">
+      <div class="flex flex-wrap justify-center gap-4 mb-12">
+        <button
+          onclick="filterGallery('all', this)"
+          class="filter-btn active px-6 py-2 rounded-full bg-[var(--primary)] text-white font-semibold shadow-md transition-all"
+        >
+          All Photos
+        </button>
+        <button
+          onclick="filterGallery('sports', this)"
+          class="filter-btn px-6 py-2 rounded-full bg-white text-gray-600 font-semibold border border-gray-200 hover:bg-gray-100 transition-all"
+        >
+          Sports
+        </button>
+        <button
+          onclick="filterGallery('classroom', this)"
+          class="filter-btn px-6 py-2 rounded-full bg-white text-gray-600 font-semibold border border-gray-200 hover:bg-gray-100 transition-all"
+        >
+          Classroom
+        </button>
+        <button
+          onclick="filterGallery('events', this)"
+          class="filter-btn px-6 py-2 rounded-full bg-white text-gray-600 font-semibold border border-gray-200 hover:bg-gray-100 transition-all"
+        >
+          Events
+        </button>
+      </div>
+
+      <div
+        id="gallery-grid"
+        class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6 space-y-6"
+      ></div>
+
+      <div id="loader" class="py-12 flex justify-center items-center w-full">
+        <div class="flex flex-col items-center gap-3">
+          <div
+            class="animate-spin rounded-full h-10 w-10 border-b-2 border-[var(--primary)]"
+          ></div>
+          <span class="text-gray-500 font-medium"
+            >Loading more memories...</span
+          >
+        </div>
+      </div>
+
+      <div
+        id="end-message"
+        class="hidden py-12 text-center text-gray-400 font-medium"
+      >
+        You've reached the end of the gallery.
+      </div>
+    </main>
+
+    <div
+      id="lightbox"
+      class="fixed inset-0 z-[5000] bg-black/95 hidden flex justify-center items-center opacity-0 transition-opacity duration-300"
+    >
+      <button
+        id="lightbox-close"
+        class="absolute top-4 right-4 text-white text-5xl font-light hover:text-[var(--accent)] transition z-[5010] focus:outline-none"
+      >
+        &times;
+      </button>
+      <img
+        id="lightbox-img"
+        src=""
+        alt="Full View"
+        class="max-h-[95vh] max-w-[95vw] w-auto h-auto object-contain rounded shadow-2xl transition-transform duration-300 transform scale-95"
+      />
+      <div
+        id="lightbox-caption"
+        class="absolute bottom-4 left-0 w-full text-center text-white/90 text-lg pointer-events-none"
+      ></div>
+    </div>
+
+    <footer
+      class="bg-[var(--primary)] text-white py-12 border-t border-white/10"
+    >
+      <div class="max-w-[1200px] mx-auto px-6 text-center">
+        <div class="flex items-center justify-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-white rounded p-1">
+            <img
+              src="assets/logo.svg"
+              class="w-full h-full object-contain"
+              alt="Kyanja Junior School"
+            />
+          </div>
+          <span class="text-xl font-bold">Kyanja Junior School</span>
+        </div>
+        <p class="text-blue-200 text-lg">
+          &copy;
+          <script>
+            document.write(new Date().getFullYear());
+          </script>
+          Kyanja Junior School. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script src="js/navbar.js"></script>
+
+    <script>
+      /* -----------------------------------------------------------------
+       1. THE "DATABASE" (Manual Entry)
+       ----------------------------------------------------------------- 
+       INSTRUCTIONS:
+       1. Upload your images to your 'assets' folder.
+       2. Copy the line below and paste it to add a new image:
+          { src: 'assets/your-image-name.jpg', category: 'sports', alt: 'Description' },
+       3. 'category' MUST be either: 'sports', 'classroom', or 'events'.
+    */
+
+      const galleryDatabase = [
+        // --- SPORTS IMAGES ---
+        {
+          src: "https://picsum.photos/800/600?random=1",
+          category: "sports",
+          alt: "Football Team 2025",
+        },
+        {
+          src: "https://picsum.photos/800/800?random=2",
+          category: "sports",
+          alt: "Swimming Gala",
+        },
+        {
+          src: "https://picsum.photos/800/500?random=3",
+          category: "sports",
+          alt: "Athletics Day",
+        },
+        {
+          src: "https://picsum.photos/800/900?random=4",
+          category: "sports",
+          alt: "Basketball Practice",
+        },
+
+        // --- CLASSROOM IMAGES ---
+        {
+          src: "https://picsum.photos/800/700?random=5",
+          category: "classroom",
+          alt: "Science Experiment",
+        },
+        {
+          src: "https://picsum.photos/800/500?random=6",
+          category: "classroom",
+          alt: "Computer Lab Session",
+        },
+        {
+          src: "https://picsum.photos/800/600?random=7",
+          category: "classroom",
+          alt: "Art Class Project",
+        },
+        {
+          src: "https://picsum.photos/800/400?random=8",
+          category: "classroom",
+          alt: "Reading Corner",
+        },
+
+        // --- EVENTS IMAGES ---
+        {
+          src: "https://picsum.photos/800/600?random=9",
+          category: "events",
+          alt: "Music Dance and Drama",
+        },
+        {
+          src: "https://picsum.photos/800/800?random=10",
+          category: "events",
+          alt: "Graduation Day",
+        },
+        {
+          src: "https://picsum.photos/800/500?random=11",
+          category: "events",
+          alt: "Parents Visitation",
+        },
+        {
+          src: "https://picsum.photos/800/700?random=12",
+          category: "events",
+          alt: "School Trip",
+        },
+
+        // Add more here...
+      ];
+
+      /* -----------------------------------------------------------------
+       2. CONFIG & VARIABLES
+       ----------------------------------------------------------------- */
+      const galleryGrid = document.getElementById("gallery-grid");
+      const loader = document.getElementById("loader");
+      const endMessage = document.getElementById("end-message");
+
+      let currentIndex = 0; // Tracks how many images we've shown
+      const itemsPerPage = 4; // How many to load at a time (Infinite Scroll batch size)
+      let currentFilter = "all";
+      let isLoading = false;
+
+      /* -----------------------------------------------------------------
+       3. LOAD IMAGES (Simulated Infinite Scroll)
+       ----------------------------------------------------------------- */
+      async function loadMoreImages() {
+        if (isLoading) return;
+
+        // Check if we have loaded everything
+        if (currentIndex >= galleryDatabase.length) {
+          loader.classList.add("hidden");
+          endMessage.classList.remove("hidden");
+          return;
+        }
+
+        isLoading = true;
+
+        // Simulate network delay (remove 'await new Promise...' in production for instant loading)
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
+        // Get the next batch of images from our database
+        const nextBatch = galleryDatabase.slice(
+          currentIndex,
+          currentIndex + itemsPerPage,
+        );
+
+        renderImages(nextBatch);
+
+        currentIndex += itemsPerPage;
+        isLoading = false;
+
+        // If we filtered immediately after loading, re-apply filter to new items
+        if (currentFilter !== "all") {
+          filterGallery(
+            currentFilter,
+            document.querySelector(".filter-btn.active") ||
+              document.querySelector(".filter-btn"),
+          );
+        }
+      }
+
+      /* -----------------------------------------------------------------
+       4. RENDER LOGIC
+       ----------------------------------------------------------------- */
+      function renderImages(images) {
+        images.forEach((img) => {
+          const div = document.createElement("div");
+          div.setAttribute("data-category", img.category);
+
+          // Base classes
+          div.className =
+            "masonry-item relative group overflow-hidden rounded-xl shadow-md cursor-zoom-in fade-in bg-gray-200";
+
+          // Check if this specific item should be visible based on current filter
+          if (currentFilter !== "all" && img.category !== currentFilter) {
+            div.classList.add("hidden-item");
+          }
+
+          // HTML Structure
+          div.innerHTML = `
+          <img src="${img.src}" alt="${img.alt}" loading="lazy" class="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-110">
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-[var(--accent)] bg-black/50 px-2 py-1 rounded">${img.category}</span>
+            <span class="text-white font-bold tracking-wide border border-white px-4 py-2 rounded-full backdrop-blur-sm pointer-events-none">Expand</span>
+          </div>
+        `;
+
+          div.addEventListener("click", () => openLightbox(img.src, img.alt));
+          galleryGrid.appendChild(div);
+        });
+      }
+
+      /* -----------------------------------------------------------------
+       5. FILTERING LOGIC
+       ----------------------------------------------------------------- */
+      function filterGallery(category, clickedBtn) {
+        currentFilter = category;
+
+        // Visual: Update Buttons
+        if (clickedBtn) {
+          document.querySelectorAll(".filter-btn").forEach((btn) => {
+            btn.classList.remove("bg-[var(--primary)]", "text-white", "active");
+            btn.classList.add(
+              "bg-white",
+              "text-gray-600",
+              "border",
+              "border-gray-200",
+            );
+          });
+          clickedBtn.classList.remove(
+            "bg-white",
+            "text-gray-600",
+            "border",
+            "border-gray-200",
+          );
+          clickedBtn.classList.add(
+            "bg-[var(--primary)]",
+            "text-white",
+            "active",
+          );
+        }
+
+        // Logic: Show/Hide based on 'data-category'
+        const allItems = document.querySelectorAll(".masonry-item");
+        allItems.forEach((item) => {
+          const itemCat = item.getAttribute("data-category");
+          if (category === "all" || itemCat === category) {
+            item.classList.remove("hidden-item");
+            // Trigger reflow animation
+            item.classList.remove("fade-in");
+            void item.offsetWidth;
+            item.classList.add("fade-in");
+          } else {
+            item.classList.add("hidden-item");
+          }
+        });
+      }
+
+      /* -----------------------------------------------------------------
+       6. OBSERVER (Triggers loadMoreImages when scrolling down)
+       ----------------------------------------------------------------- */
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            loadMoreImages();
+          }
+        },
+        { rootMargin: "100px" },
+      );
+
+      observer.observe(loader);
+
+      /* -----------------------------------------------------------------
+       7. LIGHTBOX LOGIC
+       ----------------------------------------------------------------- */
+      const lightbox = document.getElementById("lightbox");
+      const lightboxImg = document.getElementById("lightbox-img");
+      const lightboxCap = document.getElementById("lightbox-caption");
+      const lightboxClose = document.getElementById("lightbox-close");
+
+      function openLightbox(src, alt) {
+        lightboxImg.src = src;
+        lightboxCap.textContent = alt;
+        lightbox.classList.remove("hidden");
+        setTimeout(() => {
+          lightbox.classList.remove("opacity-0");
+          lightboxImg.classList.remove("scale-95");
+          lightboxImg.classList.add("scale-100");
+        }, 10);
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeLightbox() {
+        lightbox.classList.add("opacity-0");
+        lightboxImg.classList.remove("scale-100");
+        lightboxImg.classList.add("scale-95");
+        setTimeout(() => {
+          lightbox.classList.add("hidden");
+        }, 300);
+        document.body.style.overflow = "";
+      }
+
+      lightboxClose.addEventListener("click", closeLightbox);
+      lightbox.addEventListener("click", (e) => {
+        if (e.target === lightbox) closeLightbox();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !lightbox.classList.contains("hidden")) {
+          closeLightbox();
+        }
+      });
+    </script>
+  </body>
+</html>

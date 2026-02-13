@@ -1,0 +1,125 @@
+:root {
+  /* Brand Colors */
+  --primary-color: #002B7F;
+  --secondary-color: #004AAD;
+  --accent-color: #4197ff;
+  --accent-color2: #fbbf24;
+
+  /* Backgrounds */
+  --background-light: #F8FAFC;
+  --background-gray: #E5E7EB;
+  --background-dark: #111827;
+
+  /* Text Colors */
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-muted: #6B7280;
+  --text-inverse: #FFFFFF;
+
+  /* Status */
+  --success-color: #22C55E;
+  --danger-color: #DC2626;
+  --warning-color: #FACC15;
+  --info-color: #3B82F6;
+  --neutral-color: #6B7280;
+
+  /* Surfaces */
+  --surface-default: #FFFFFF;
+  --surface-alt: #F1F5F9;
+
+  /* Borders */
+  --border-color: #E5E7EB;
+
+  /* Shadow */
+  --shadow-color: rgba(0, 0, 0, 0.08);
+
+  /* Font */
+  --font-family: 'Inter', sans-serif;
+}
+
+/* Global Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { font-size: 62.5%; }
+
+body {
+  font-family: var(--font-family);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.
+
+h1 {
+    font-size: clamp(2rem, 5vw, 4.2rem);
+  }
+
+/* --- Slinding Admission Bar --- */
+@keyframes marquee {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  display: inline-block;
+  min-width: 100%;
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+  cursor: pointer;
+}
+
+
+
+
+/* --- Metrics section Customization --- */
+.metric-item:hover {
+  transform: translateY(-4px);
+  transition: 0.25s ease;
+}
+
+.metric-item:hover .metric-number {
+  color: var(--secondary-color);
+  text-shadow: 0 0 4px rgba(0, 145, 255, 0.6);
+}
+.metric-number {
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* --- Hero Word Animation --- */
+.word {
+  display: inline-block;
+  opacity: 0.01; /* instead of 0 — prevents text vanishing */
+  transform: translateY(18px);
+  transition: opacity .6s ease-out, transform .6s ease-out;
+}
+
+.word.fade {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+
+/* Carousel touch behavior & small polish */
+#clubs-scroll {
+  touch-action: pan-y;               /* allow vertical pans by default */
+  -webkit-overflow-scrolling: touch; /* momentum on iOS */
+  scroll-behavior: auto;
+}
+
+/* visual feedback while dragging */
+#clubs-scroll.is-dragging { cursor: grabbing; }
+#clubs-scroll .is-dragging { pointer-events: none; }
+
+/* optional: slightly reduce default gap on tiny screens for better feel */
+@media (max-width:420px) {
+  #clubs-scroll > li { margin-right: 12px; }
+}
+/* End Carousel Customization */
