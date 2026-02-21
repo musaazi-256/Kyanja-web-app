@@ -9,13 +9,14 @@
 
 ## What is automated now
 - Build-time environment validation (`scripts/check-env.mjs`)
-- Production-safe build pipeline:
+- Production-safe build pipeline (Supabase/Postgres):
   - `prisma generate`
-  - `prisma migrate deploy`
+  - `prisma db push`
   - `next build`
 - Clear fail-fast checks for Vercel when:
   - required env vars are missing
   - `DATABASE_URL` is still SQLite (`file:...`) in production
+  - `DIRECT_URL` is missing in production
 
 ## Local development
 1. Install dependencies:
@@ -36,9 +37,10 @@
 Change credentials immediately after first login.
 
 ## Vercel deployment checklist (what you still must do)
-1. Create a hosted Postgres DB (Neon, Supabase, or Vercel Postgres).
+1. Create/connect a Supabase Postgres project.
 2. In Vercel project settings, add env vars:
-   - `DATABASE_URL` = your Postgres connection string
+   - `DATABASE_URL` = Supabase pooler URL (`:6543`, with `?pgbouncer=true`)
+   - `DIRECT_URL` = Supabase direct DB URL (`:5432`)
    - `AUTH_SECRET` = strong random secret
    - `AUTH_URL` = your production URL, e.g. `https://your-domain.com`
 3. Ensure your Vercel project is connected to this repo/branch.

@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/check-env.mjs && prisma generate && prisma migrate deploy && next build",
+    "build": "node scripts/check-env.mjs && prisma generate && prisma db push && next build",
     "start": "next start",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
+    "prisma:push": "prisma db push",
     "prisma:seed": "tsx prisma/seed.ts",
     "check:env": "node scripts/check-env.mjs"
   },

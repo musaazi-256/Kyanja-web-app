@@ -28,6 +28,12 @@ if (missingAlways.length > 0) {
 
 const isProdLike = process.env.VERCEL === "1" || process.env.NODE_ENV === "production";
 if (isProdLike) {
+  if (!process.env.DIRECT_URL) {
+    console.error("Missing DIRECT_URL for production deployment.");
+    console.error("Set DIRECT_URL to the non-pooling Supabase Postgres URL.");
+    process.exit(1);
+  }
+
   const hasAuthUrl = Boolean(process.env.AUTH_URL || process.env.NEXTAUTH_URL);
   if (!hasAuthUrl) {
     console.error("Missing AUTH_URL (or NEXTAUTH_URL) for production deployment.");
