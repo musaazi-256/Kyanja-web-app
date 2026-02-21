@@ -1,17 +1,51 @@
-# React + Vite
+# Kyanja Junior School - Next.js Full-Stack App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Stack
+- Next.js App Router + TypeScript
+- Tailwind CSS + Framer Motion + Lucide Icons
+- Prisma ORM
+- NextAuth.js v5 (Credentials auth)
+- React Hook Form + Zod
 
-Currently, two official plugins are available:
+## What is automated now
+- Build-time environment validation (`scripts/check-env.mjs`)
+- Production-safe build pipeline:
+  - `prisma generate`
+  - `prisma migrate deploy`
+  - `next build`
+- Clear fail-fast checks for Vercel when:
+  - required env vars are missing
+  - `DATABASE_URL` is still SQLite (`file:...`) in production
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Local development
+1. Install dependencies:
+   `npm install`
+2. Setup env:
+   `cp .env.example .env`
+3. Run migrations:
+   `npx prisma migrate dev --name init`
+4. Seed admin:
+   `npm run prisma:seed`
+5. Start dev server:
+   `npm run dev`
 
-## React Compiler
+## Default admin
+- Email: `admin@kyanjajuniorschool.edu`
+- Password: `Admin@123`
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Change credentials immediately after first login.
 
-## Expanding the ESLint configuration
+## Vercel deployment checklist (what you still must do)
+1. Create a hosted Postgres DB (Neon, Supabase, or Vercel Postgres).
+2. In Vercel project settings, add env vars:
+   - `DATABASE_URL` = your Postgres connection string
+   - `AUTH_SECRET` = strong random secret
+   - `AUTH_URL` = your production URL, e.g. `https://your-domain.com`
+3. Ensure your Vercel project is connected to this repo/branch.
+4. Trigger redeploy.
+5. After successful deploy, seed an admin user (run once from a trusted env):
+   - `npm run prisma:seed`
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# Kyanja-web-app
+## If Vercel build fails
+- Open deployment logs and check first red error line.
+- Common causes are missing env vars or invalid `DATABASE_URL`.
