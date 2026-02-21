@@ -6,14 +6,10 @@ import path from "node:path";
 
 import { revalidatePath } from "next/cache";
 
-import { prisma } from "@/lib/prisma";
+import { addManagedImage, deleteManagedImage, getManagedImageById, mediaSections, type MediaSection, updateManagedImage } from "@/lib/db";
 
-const validSections = ["HERO", "PHILOSOPHY", "TEAM", "SCHOOL_CLUBS", "ADS_BANNER"] as const;
-
-type ValidSection = (typeof validSections)[number];
-
-function isValidSection(section: string): section is ValidSection {
-  return validSections.includes(section as ValidSection);
+function isValidSection(section: string): section is MediaSection {
+  return mediaSections.includes(section as MediaSection);
 }
 
 export async function addManagedImageAction(formData: FormData) {
@@ -87,17 +83,15 @@ export async function addManagedImageAction(formData: FormData) {
     imageUrl = mobileImageUrl;
   }
 
-  await prisma.managedImage.create({
-    data: {
-      section: sectionRaw,
-      imageUrl: imageUrl || null,
-      mobileImageUrl,
-      title,
-      subtitle: subtitle || null,
-      description: description || null,
-      sortOrder: Number.isFinite(sortOrder) ? sortOrder : 0,
-      isActive
-    }
+  await addManagedImage({
+    section: sectionRaw,
+    imageUrl: imageUrl || null,
+    mobileImageUrl,
+    title,
+    subtitle: subtitle || null,
+    description: description || null,
+    sortOrder: Number.isFinite(sortOrder) ? sortOrder : 0,
+    isActive
   });
 
   revalidatePath("/");
@@ -113,12 +107,9 @@ export async function deleteManagedImageAction(formData: FormData) {
     return;
   }
 
-  const existing = await prisma.managedImage.findUnique({
-    where: { id },
-    select: { imageUrl: true, mobileImageUrl: true }
-  });
+  const existing = await getManagedImageById(id);
 
-  await prisma.managedImage.delete({ where: { id } });
+  await deleteManagedImage(id);
 
   if (existing?.imageUrl && existing.imageUrl.startsWith("/uploads/managed/")) {
     const relativePath = existing.imageUrl.replace(/^\/+/, "");
@@ -176,10 +167,7 @@ export async function updateManagedImageAction(formData: FormData) {
     return;
   }
 
-  const existing = await prisma.managedImage.findUnique({
-    where: { id },
-    select: { imageUrl: true, mobileImageUrl: true }
-  });
+  const existing = await getManagedImageById(id);
 
   if (!existing) {
     return;
@@ -243,18 +231,15 @@ export async function updateManagedImageAction(formData: FormData) {
     nextImageUrl = nextMobileImageUrl;
   }
 
-  await prisma.managedImage.update({
-    where: { id },
-    data: {
-      section: sectionRaw,
-      imageUrl: nextImageUrl || null,
-      mobileImageUrl: nextMobileImageUrl,
-      title,
-      subtitle: subtitle || null,
-      description: description || null,
-      sortOrder: Number.isFinite(sortOrder) ? sortOrder : 0,
-      isActive
-    }
+  await updateManagedImage(id, {
+    section: sectionRaw,
+    imageUrl: nextImageUrl || null,
+    mobileImageUrl: nextMobileImageUrl,
+    title,
+    subtitle: subtitle || null,
+    description: description || null,
+    sortOrder: Number.isFinite(sortOrder) ? sortOrder : 0,
+    isActive
   });
 
   if (existing.imageUrl && existing.imageUrl !== nextImageUrl && existing.imageUrl.startsWith("/uploads/managed/")) {

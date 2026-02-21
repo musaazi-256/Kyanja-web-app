@@ -4,7 +4,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 
-import { prisma } from "@/lib/prisma";
+import { createAdmission } from "@/lib/db";
 import { admissionSchema, previousSchoolSchema } from "@/lib/validations/admission";
 
 export async function submitAdmissionAction(formData: FormData) {
@@ -55,30 +55,28 @@ export async function submitAdmissionAction(formData: FormData) {
     passportPhotoUrl = `/uploads/${filename}`;
   }
 
-  await prisma.admissionApplication.create({
-    data: {
-      surname: parsed.data.surname,
-      foreName: parsed.data.foreName,
-      dateOfBirth: new Date(parsed.data.dateOfBirth),
-      religiousBelief: parsed.data.religiousBelief,
-      passportPhotoUrl,
-      previousSchools: parsed.data.previousSchools,
-      vaccinationPolio: parsed.data.vaccinationPolio,
-      vaccinationTyphoid: parsed.data.vaccinationTyphoid,
-      vaccinationMeasles: parsed.data.vaccinationMeasles,
-      healthOthers: parsed.data.healthOthers,
-      parentName: parsed.data.parentName,
-      residence: parsed.data.residence,
-      email: parsed.data.email,
-      telHome: parsed.data.telHome,
-      telOffice: parsed.data.telOffice,
-      occupation: parsed.data.occupation,
-      nin: parsed.data.nin,
-      nextOfKin: parsed.data.nextOfKin,
-      declarationAccepted: parsed.data.declarationAccepted,
-      digitalSignature: parsed.data.digitalSignature,
-      signedDate: new Date(parsed.data.signedDate)
-    }
+  await createAdmission({
+    surname: parsed.data.surname,
+    foreName: parsed.data.foreName,
+    dateOfBirth: parsed.data.dateOfBirth,
+    religiousBelief: parsed.data.religiousBelief,
+    passportPhotoUrl: passportPhotoUrl || null,
+    previousSchools: parsed.data.previousSchools,
+    vaccinationPolio: parsed.data.vaccinationPolio,
+    vaccinationTyphoid: parsed.data.vaccinationTyphoid,
+    vaccinationMeasles: parsed.data.vaccinationMeasles,
+    healthOthers: parsed.data.healthOthers || null,
+    parentName: parsed.data.parentName,
+    residence: parsed.data.residence,
+    email: parsed.data.email,
+    telHome: parsed.data.telHome,
+    telOffice: parsed.data.telOffice || null,
+    occupation: parsed.data.occupation,
+    nin: parsed.data.nin,
+    nextOfKin: parsed.data.nextOfKin,
+    declarationAccepted: parsed.data.declarationAccepted,
+    digitalSignature: parsed.data.digitalSignature,
+    signedDate: parsed.data.signedDate
   });
 
   return { success: true };

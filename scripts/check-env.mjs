@@ -17,9 +17,7 @@ if (fs.existsSync(envFilePath)) {
   }
 }
 
-const requiredAlways = ["DATABASE_URL", "AUTH_SECRET"];
-const requiredProdLike = ["AUTH_URL"]; // or NEXTAUTH_URL if you prefer
-
+const requiredAlways = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "AUTH_SECRET"];
 const missingAlways = requiredAlways.filter((key) => !process.env[key]);
 if (missingAlways.length > 0) {
   console.error(`Missing required environment variables: ${missingAlways.join(", ")}`);
@@ -28,22 +26,9 @@ if (missingAlways.length > 0) {
 
 const isProdLike = process.env.VERCEL === "1" || process.env.NODE_ENV === "production";
 if (isProdLike) {
-  if (!process.env.DIRECT_URL) {
-    console.error("Missing DIRECT_URL for production deployment.");
-    console.error("Set DIRECT_URL to the non-pooling Supabase Postgres URL.");
-    process.exit(1);
-  }
-
   const hasAuthUrl = Boolean(process.env.AUTH_URL || process.env.NEXTAUTH_URL);
   if (!hasAuthUrl) {
     console.error("Missing AUTH_URL (or NEXTAUTH_URL) for production deployment.");
-    process.exit(1);
-  }
-
-  const dbUrl = process.env.DATABASE_URL || "";
-  if (dbUrl.startsWith("file:")) {
-    console.error("DATABASE_URL is using SQLite (file:...) which is not suitable for Vercel production.");
-    console.error("Use a hosted Postgres URL (Neon/Supabase/Vercel Postgres) and redeploy.");
     process.exit(1);
   }
 }

@@ -5,7 +5,7 @@ import { mkdir, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { revalidatePath } from "next/cache";
-import { prisma } from "@/lib/prisma";
+import { addGalleryImage, deleteGalleryImage, getGalleryImageById } from "@/lib/db";
 
 export async function addGalleryImageAction(formData: FormData) {
   const imageUrl = String(formData.get("imageUrl") || "").trim();
@@ -44,9 +44,7 @@ export async function addGalleryImageAction(formData: FormData) {
     return;
   }
 
-  await prisma.galleryImage.create({
-    data: { imageUrl: finalImageUrl, altText }
-  });
+  await addGalleryImage({ imageUrl: finalImageUrl, altText });
 
   revalidatePath("/gallery");
   revalidatePath("/admin/gallery");
@@ -58,12 +56,9 @@ export async function deleteGalleryImageAction(formData: FormData) {
     return;
   }
 
-  const image = await prisma.galleryImage.findUnique({
-    where: { id },
-    select: { imageUrl: true }
-  });
+  const image = await getGalleryImageById(id);
 
-  await prisma.galleryImage.delete({ where: { id } });
+  await deleteGalleryImage(id);
 
   if (image?.imageUrl.startsWith("/uploads/gallery/")) {
     const relativePath = image.imageUrl.replace(/^\/+/, "");

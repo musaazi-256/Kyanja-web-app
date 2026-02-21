@@ -1,10 +1,10 @@
-import { prisma } from "@/lib/prisma";
+import { countAdmissions, countGalleryImages } from "@/lib/db";
 
 export default async function AdminDashboardPage() {
   const [pendingAdmissions, totalAdmissions, totalGalleryImages] = await Promise.all([
-    prisma.admissionApplication.count({ where: { status: "pending" } }),
-    prisma.admissionApplication.count(),
-    prisma.galleryImage.count()
+    countAdmissions("pending"),
+    countAdmissions(),
+    countGalleryImages()
   ]);
 
   const stats = [

@@ -1,5 +1,5 @@
 import { MasonryGrid } from "@/components/gallery/masonry-grid";
-import { prisma } from "@/lib/prisma";
+import { listGalleryImages } from "@/lib/db";
 
 const fallbackImages = [
   { id: "1", imageUrl: "/legacy-assets/Scouts.webp", altText: "Scouts" },
@@ -11,9 +11,7 @@ const fallbackImages = [
 ];
 
 export default async function GalleryPage() {
-  const dbImages = await prisma.galleryImage.findMany({
-    orderBy: { createdAt: "desc" }
-  });
+  const dbImages = await listGalleryImages();
 
   const images = dbImages.length > 0 ? dbImages : fallbackImages;
 

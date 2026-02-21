@@ -1,10 +1,9 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 
-import { prisma } from "@/lib/prisma";
+import { getAdminUserByEmail } from "@/lib/db";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -12,7 +11,6 @@ const signInSchema = z.object({
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login"
@@ -30,9 +28,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: parsed.data.email }
-        });
+        const user = await getAdminUserByEmail(parsed.data.email);
 
         if (!user) {
           return null;

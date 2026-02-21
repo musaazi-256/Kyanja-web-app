@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { prisma } from "@/lib/prisma";
+import { getAdmissionById } from "@/lib/db";
 
 type AdmissionDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -9,22 +9,20 @@ type AdmissionDetailPageProps = {
 export default async function AdmissionDetailPage({ params }: AdmissionDetailPageProps) {
   const { id } = await params;
 
-  const admission = await prisma.admissionApplication.findUnique({
-    where: { id }
-  });
+  const admission = await getAdmissionById(id);
 
   if (!admission) {
     notFound();
   }
 
-  const schools = Array.isArray(admission.previousSchools) ? admission.previousSchools : [];
+  const schools = admission.previousSchools;
 
   return (
     <section>
       <h1 className="text-2xl font-extrabold text-brand-navy">Admission Details</h1>
       <div className="mt-6 grid gap-4 rounded-2xl border border-slate-200 p-5 md:grid-cols-2">
         <Field label="Pupil Name" value={`${admission.surname} ${admission.foreName}`} />
-        <Field label="Date of Birth" value={admission.dateOfBirth.toLocaleDateString()} />
+        <Field label="Date of Birth" value={new Date(admission.dateOfBirth).toLocaleDateString()} />
         <Field label="Religious Belief" value={admission.religiousBelief} />
         <Field label="Parent / Guardian" value={admission.parentName} />
         <Field label="Email" value={admission.email} />
@@ -38,7 +36,7 @@ export default async function AdmissionDetailPage({ params }: AdmissionDetailPag
         <Field label="Vaccinations" value={[admission.vaccinationPolio && "Polio", admission.vaccinationTyphoid && "Typhoid", admission.vaccinationMeasles && "Measles"].filter(Boolean).join(", ") || "None"} />
         <Field label="Other Health Notes" value={admission.healthOthers || "-"} />
         <Field label="Digital Signature" value={admission.digitalSignature} />
-        <Field label="Signed Date" value={admission.signedDate.toLocaleDateString()} />
+        <Field label="Signed Date" value={new Date(admission.signedDate).toLocaleDateString()} />
       </div>
 
       <div className="mt-6 rounded-2xl border border-slate-200 p-5">
@@ -50,10 +48,9 @@ export default async function AdmissionDetailPage({ params }: AdmissionDetailPag
                 return null;
               }
 
-              const data = school as { name?: string; since?: string; to?: string };
               return (
-                <li key={`${data.name ?? "school"}-${index}`}>
-                  {data.name ?? "Unknown"}: {data.since ?? "?"} - {data.to ?? "?"}
+                <li key={`${school.name || "school"}-${index}`}>
+                  {school.name || "Unknown"}: {school.since || "?"} - {school.to || "?"}
                 </li>
               );
             })

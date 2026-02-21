@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
+import { listAdmissions } from "@/lib/db";
 
 type AdmissionsPageProps = {
   searchParams: Promise<{ status?: string }>;
@@ -9,11 +9,7 @@ export default async function AdminAdmissionsPage({ searchParams }: AdmissionsPa
   const { status } = await searchParams;
   const activeStatus = status ?? "all";
 
-  const admissions = await prisma.admissionApplication.findMany({
-    where: status ? { status } : undefined,
-    orderBy: { createdAt: "desc" },
-    take: 50
-  });
+  const admissions = await listAdmissions(status);
 
   return (
     <section>
@@ -54,7 +50,7 @@ export default async function AdminAdmissionsPage({ searchParams }: AdmissionsPa
                 <td className="px-4 py-3">{admission.parentName}</td>
                 <td className="px-4 py-3">{admission.email}</td>
                 <td className="px-4 py-3 capitalize">{admission.status}</td>
-                <td className="px-4 py-3">{admission.createdAt.toLocaleDateString()}</td>
+                <td className="px-4 py-3">{new Date(admission.createdAt).toLocaleDateString()}</td>
                 <td className="px-4 py-3">
                   <Link href={`/admin/admissions/${admission.id}`} className="font-semibold text-brand-navy">
                     View

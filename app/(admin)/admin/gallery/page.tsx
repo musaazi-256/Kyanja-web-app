@@ -1,10 +1,8 @@
 import { addGalleryImageAction, deleteGalleryImageAction } from "@/app/(admin)/admin/gallery/actions";
-import { prisma } from "@/lib/prisma";
+import { listGalleryImages } from "@/lib/db";
 
 export default async function AdminGalleryPage() {
-  const images = await prisma.galleryImage.findMany({
-    orderBy: { createdAt: "desc" }
-  });
+  const images = await listGalleryImages();
 
   return (
     <section>
@@ -42,7 +40,7 @@ export default async function AdminGalleryPage() {
                 <p className="mt-1 truncate text-xs text-slate-500">{image.imageUrl}</p>
               </div>
               <div className="flex items-center justify-between">
-                <p className="text-xs text-slate-500">{image.createdAt.toLocaleDateString()}</p>
+                <p className="text-xs text-slate-500">{new Date(image.createdAt).toLocaleDateString()}</p>
                 <form action={deleteGalleryImageAction}>
                   <input type="hidden" name="id" value={image.id} />
                   <button type="submit" className="rounded-lg border border-red-300 px-3 py-2 text-xs font-medium text-red-700">

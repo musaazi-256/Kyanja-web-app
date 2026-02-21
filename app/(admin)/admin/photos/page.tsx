@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { addManagedImageAction, deleteManagedImageAction, updateManagedImageAction } from "@/app/(admin)/admin/photos/actions";
-import { prisma } from "@/lib/prisma";
+import { listManagedImages, mediaSections, type MediaSection } from "@/lib/db";
 
 const sections = [
   { key: "HERO", label: "Hero Image" },
@@ -18,12 +18,10 @@ type AdminPhotosPageProps = {
 
 export default async function AdminPhotosPage({ searchParams }: AdminPhotosPageProps) {
   const { section } = await searchParams;
-  const activeSection: SectionKey = sections.some((item) => item.key === section) ? (section as SectionKey) : "HERO";
+  const isValidSection = mediaSections.some((item) => item === section);
+  const activeSection: SectionKey = isValidSection ? (section as MediaSection) : "HERO";
 
-  const images = await prisma.managedImage.findMany({
-    where: { section: activeSection },
-    orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }]
-  });
+  const images = await listManagedImages(activeSection);
 
   return (
     <section>

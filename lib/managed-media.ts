@@ -1,6 +1,4 @@
-import { type ManagedImage, type MediaSection } from "@prisma/client";
-
-import { prisma } from "@/lib/prisma";
+import { type ManagedImage, type MediaSection, listManagedImages } from "@/lib/db";
 import { clubHighlights, schoolMeta, team } from "@/lib/content";
 
 export type ManagedImageItem = {
@@ -31,12 +29,9 @@ function toItem(item: ManagedImage): ManagedImageItem {
 
 export async function getManagedSection(section: MediaSection): Promise<ManagedImageItem[]> {
   try {
-    const rows = await prisma.managedImage.findMany({
-      where: { section, isActive: true },
-      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }]
-    });
+    const rows = await listManagedImages(section);
 
-    return rows.map(toItem);
+    return rows.filter((item) => item.isActive).map(toItem);
   } catch {
     // If migration hasn't been run yet, fallback to static content.
     return [];
